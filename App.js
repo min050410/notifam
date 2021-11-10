@@ -1,83 +1,56 @@
 import * as React from 'react';
-import {useState}  from 'react';
-import { Button, View, Text } from 'react-native';
+import { Text, View, StyleSheet } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
-import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 
-function StackScreen() {
-  return(
-    <Stack.Navigator>
-      <Stack.Screen
-        name = "Home"
-        component = {HomeScreen} 
-        options = {({navigation, route}) => ({ 
-          headerTitle: props => <LogoTitle {...props}/>
-        })}
-      />
-    </Stack.Navigator>
-  )
+
+function NowScreen() {
+  return (
+    <View style={styles.normal}>
+      <Text>now</Text>
+    </View>
+    
+  );
 }
 
 
-
-function HomeScreen({ navigation }) { //home screen 함수
-  const [count, setCount] = React.useState(0);
-
-  React.useLayoutEffect(() => {
-    navigation.setOptions({
-      headerRight : () => (
-        <Button onPress={()=>setCount(c=>c+1)} title="Update count"/>
-      ),
-    })
-  }, [navigation]);
+function HomeScreen() {
   return (
-    <View style={{ 
-      flex: 1,
-      alignItems: 'center',
-      justifyContent: 'center'
-    }}>
-      <Text>{count}</Text>
-      <Button
-        title="Go to Details"
-        onPress={()=>navigation.navigate('Details')}
-      />
+    <View style={styles.normal}>
+      <Text>Home!</Text>
     </View>
   );
-} 
-
-function DetailsScreen({ navigation }){
-  return(
-    <View style={{
-      flex:1,
-      alignItems: 'center',
-      justifyContent: 'center',
-    }}>
-      <Text>Details Screen</Text>
-      <Button
-        title = "Go to Details... again"
-        onPress={()=>navigation.push('Details')}
-
-      />
-      <Button title="Go back" onPress={()=>navigation.goBack()}/>
-      <Button title="Go back to first screen in stack" 
-      onPress={()=>navigation.popToTop()}
-      />
-    </View>
-  )
 }
 
-const Stack = createNativeStackNavigator();
+function SettingsScreen() {
+  return (
+    <View style={styles.normal}>
+      <Text>Settings!</Text>
+    </View>
+  );
+}
 
-function App() {
+const Tab = createBottomTabNavigator();
+
+export default function App() {
   return (
     <NavigationContainer>
-      <Stack.Navigator>
-        
-        <Stack.Screen name="Home" component={HomeScreen} options={{ title: 'Overview' }}/>
-        <Stack.Screen name="Details" component={DetailsScreen}/>
-      </Stack.Navigator>
+      <Tab.Navigator>
+        <Tab.Screen name="now" component={NowScreen}/>
+        <Tab.Screen style={styles.completeCircle} name="Home" component={HomeScreen}/>
+        <Tab.Screen name="Search" component={SettingsScreen} />
+      </Tab.Navigator>
     </NavigationContainer>
   );
 }
 
-export default App;
+const styles = StyleSheet.create({
+  normal: {
+    flex: 1,
+    justifyContent: 'center', 
+    alignItems: 'center',
+  },
+  completeCircle: {
+    flex: 1,
+  }
+})
