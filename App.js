@@ -1,16 +1,42 @@
 import * as React from 'react';
+import {useState}  from 'react';
 import { Button, View, Text } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 
+function StackScreen() {
+  return(
+    <Stack.Navigator>
+      <Stack.Screen
+        name = "Home"
+        component = {HomeScreen} 
+        options = {({navigation, route}) => ({ 
+          headerTitle: props => <LogoTitle {...props}/>
+        })}
+      />
+    </Stack.Navigator>
+  )
+}
+
+
+
 function HomeScreen({ navigation }) { //home screen 함수
+  const [count, setCount] = React.useState(0);
+
+  React.useLayoutEffect(() => {
+    navigation.setOptions({
+      headerRight : () => (
+        <Button onPress={()=>setCount(c=>c+1)} title="Update count"/>
+      ),
+    })
+  }, [navigation]);
   return (
     <View style={{ 
       flex: 1,
       alignItems: 'center',
       justifyContent: 'center'
     }}>
-      <Text>Home Screen</Text>
+      <Text>{count}</Text>
       <Button
         title="Go to Details"
         onPress={()=>navigation.navigate('Details')}
@@ -19,7 +45,7 @@ function HomeScreen({ navigation }) { //home screen 함수
   );
 } 
 
-function DetailsScreen(){
+function DetailsScreen({ navigation }){
   return(
     <View style={{
       flex:1,
@@ -28,8 +54,13 @@ function DetailsScreen(){
     }}>
       <Text>Details Screen</Text>
       <Button
-        title = "Go to Details... agin"
-        onPress={()=>navigation.navigate('Details')}
+        title = "Go to Details... again"
+        onPress={()=>navigation.push('Details')}
+
+      />
+      <Button title="Go back" onPress={()=>navigation.goBack()}/>
+      <Button title="Go back to first screen in stack" 
+      onPress={()=>navigation.popToTop()}
       />
     </View>
   )
