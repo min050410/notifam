@@ -2,7 +2,7 @@ import * as React from 'react';
 import { ScrollView, ActivityIndicator, Text, View, StyleSheet } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-// import { fetch } from 'react-native';
+// import { fetch } from 'react-native'; 
 import { useEffect, useState } from 'react';
 
 // function getSitename(){
