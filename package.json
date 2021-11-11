@@ -13,8 +13,10 @@
     "@react-navigation/bottom-tabs": "^6.0.9",
     "@react-navigation/native": "^6.0.6",
     "@react-navigation/native-stack": "^6.2.5",
+    "child_process": "^1.0.2",
+    "python-shell": "^3.0.1",
     "react": "17.0.2",
-    "react-native": "0.66.2",
+    "react-native": "^0.66.2",
     "react-native-safe-area-context": "^3.3.2",
     "react-native-screens": "^3.9.0"
   },

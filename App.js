@@ -1,83 +1,103 @@
 import * as React from 'react';
-import {useState}  from 'react';
-import { Button, View, Text } from 'react-native';
+import { ScrollView, ActivityIndicator, Text, View, StyleSheet } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
-import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+// import { fetch } from 'react-native';
+import { useEffect, useState } from 'react';
 
-function StackScreen() {
-  return(
-    <Stack.Navigator>
-      <Stack.Screen
-        name = "Home"
-        component = {HomeScreen} 
-        options = {({navigation, route}) => ({ 
-          headerTitle: props => <LogoTitle {...props}/>
-        })}
-      />
-    </Stack.Navigator>
-  )
+// function getSitename(){
+//   fetch('https://www.garak.co.kr/publicdata/dataOpen.do?id=3098&passwd=qkrandjs1%21&dataid=data4&pagesize=10&pageidx=1&portal.templet=false&p_ymd=20211111&p_jymd=20211110&d_cd=2&p_jjymd=20201111&p_pos_gubun=1&pum_nm=').then((response) => {
+
+//   return response
+//   });
+// }
+
+// 현재가를 알려주는 스크린
+function NowScreen() {
+  return (
+
+    <View style={styles.normal}>
+      <Text>now</Text>
+    </View>
+
+  );
 }
 
+//홈 화면 스크린 - 예측 예상
+function HomeScreen() {
 
+  const [isLoading, setLoading] = useState(true);
+  const [data, setData] = useState([]);
 
-function HomeScreen({ navigation }) { //home screen 함수
-  const [count, setCount] = React.useState(0);
+  //api 통신
+  const getPrice = async () => {
+    try {
+      const response = await fetch('https://www.garak.co.kr/publicdata/dataOpen.do?id=3098&passwd=qkrandjs1%21&dataid=data4&pagesize=10&pageidx=1&portal.templet=false&p_ymd=20211111&p_jymd=20211110&d_cd=2&p_jjymd=20201111&p_pos_gubun=1&pum_nm=');
+      const json = await response.text();
+      setData(json);
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setLoading(false);
+    }
+  }
 
-  React.useLayoutEffect(() => {
-    navigation.setOptions({
-      headerRight : () => (
-        <Button onPress={()=>setCount(c=>c+1)} title="Update count"/>
-      ),
-    })
-  }, [navigation]);
+  useEffect(() => {
+    getPrice();
+  }, []);
+
   return (
-    <View style={{ 
-      flex: 1,
-      alignItems: 'center',
-      justifyContent: 'center'
-    }}>
-      <Text>{count}</Text>
-      <Button
-        title="Go to Details"
-        onPress={()=>navigation.navigate('Details')}
-      />
+    <View style={{ flex: 1, padding: 24 }}>
+      {isLoading ? <ActivityIndicator/> : (
+        // <FlatList
+        //   data={data}
+        //   keyExtractor={({ id }, index) => id}
+        //   renderItem={({ item }) => (
+        //     <Text>{item}, {item.releaseYear}</Text>
+        //   )}
+        // />
+        
+        <ScrollView>
+          <Text>{data}</Text>
+        </ScrollView>
+      )}
     </View>
   );
-} 
-
-function DetailsScreen({ navigation }){
-  return(
-    <View style={{
-      flex:1,
-      alignItems: 'center',
-      justifyContent: 'center',
-    }}>
-      <Text>Details Screen</Text>
-      <Button
-        title = "Go to Details... again"
-        onPress={()=>navigation.push('Details')}
-
-      />
-      <Button title="Go back" onPress={()=>navigation.goBack()}/>
-      <Button title="Go back to first screen in stack" 
-      onPress={()=>navigation.popToTop()}
-      />
-    </View>
-  )
 }
 
-const Stack = createNativeStackNavigator();
+//search 검색 스크린
+function SettingsScreen() {
+  return (
+    <View style={styles.normal}>
+      <Text>Search!</Text>
+    </View>
+  );
+}
 
-function App() {
+const Tab = createBottomTabNavigator();
+
+export default function App() {
+
   return (
     <NavigationContainer>
-      <Stack.Navigator>
-        
-        <Stack.Screen name="Home" component={HomeScreen} options={{ title: 'Overview' }}/>
-        <Stack.Screen name="Details" component={DetailsScreen}/>
-      </Stack.Navigator>
+      <Tab.Navigator>
+        <Tab.Screen name="now" component={NowScreen} />
+        <Tab.Screen style={styles.completeCircle} name="Home" component={HomeScreen} />
+        <Tab.Screen name="Search" component={SettingsScreen} />
+      </Tab.Navigator>
     </NavigationContainer>
   );
 }
 
-export default App;
+
+
+const styles = StyleSheet.create({
+  normal: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  completeCircle: {
+    flex: 1,
+  }
+})
