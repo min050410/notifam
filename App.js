@@ -12,12 +12,24 @@ import { useEffect, useState } from 'react';
 //   });
 // }
 
+// 날짜 구하기
+function todayTime(){
+  let now = new Date;
+  let year = now.getFullYear();
+  let todayMonth = now.getMonth() + 1;
+  let todayDate = now.getDate();
+  const week = ['일', '월', '화', '수', '목', '금', '토'];
+  let dayOfWeek = week[now.getDay()];
+
+  return year + '년 ' + todayMonth + '월 ' + todayDate + '일 ' + dayOfWeek + '요일 ';
+}
+
 // 현재가를 알려주는 스크린
 function NowScreen() {
   return (
 
     <View style={styles.normal}>
-      <Text>now</Text>
+      <Text>{todayTime()}</Text>
     </View>
 
   );
@@ -61,6 +73,7 @@ function HomeScreen() {
           <Text>{data}</Text>
         </ScrollView>
       )}
+      <Text>{todayTime()}</Text>
     </View>
   );
 }
@@ -79,6 +92,7 @@ const Tab = createBottomTabNavigator();
 export default function App() {
 
   return (
+    
     <NavigationContainer>
       <Tab.Navigator>
         <Tab.Screen name="now" component={NowScreen} />
@@ -93,6 +107,7 @@ export default function App() {
 
 const styles = StyleSheet.create({
   normal: {
+    // backgroundColor: "blue",
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
@@ -100,4 +115,5 @@ const styles = StyleSheet.create({
   completeCircle: {
     flex: 1,
   }
+
 })
