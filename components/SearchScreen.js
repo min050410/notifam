@@ -8,7 +8,7 @@ import todayTime from 'NOTIFAM/components/todaytime';
 function SearchScreen() {
     return (
         <View style={styles.normal}>
-            <Text>Search!</Text>
+        <Text >{todayTime()}</Text>
         </View>
     );
 }
