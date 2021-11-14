@@ -8,8 +8,8 @@ from urllib.parse import urlencode, quote_plus, unquote
 
 xmlUrl = 'https://www.garak.co.kr/publicdata/dataOpen.do'
 
-#a = int(input())
-a = 20211111
+a = int(input())
+# a = 20211111
 b = a-1
 c = a-10000
 
