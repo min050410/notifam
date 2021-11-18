@@ -51,7 +51,7 @@ function NowScreen() {
         useEffect(() => {
             getPrice(menu);
         }, []),
-
+        
         <View style={styles.item} key={index}>
             <Text style={styles.itemTitle}
             ellipsizeMode={'tail'}>{menu}</Text>
