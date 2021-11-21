@@ -18,7 +18,7 @@ function HomeScreen() {
         // console.log(texts);
         try {
             setLoading(true);
-            const response = await fetch('http://172.30.1.27/apidata', { // 학교 가서 바꾸기 
+            const response = await fetch('http://10.150.149.2/apidata', { // 학교 가서 바꾸기 
                 method: "POST",
                 credentials: "include",
                 body: JSON.stringify({"data": texts}),
@@ -28,8 +28,9 @@ function HomeScreen() {
                 })
             })
             const text = await response.text();
-            console.log(text);
-            setPredata(text.substring(1,text.length-1));
+            const Viewtext = Number(text.substring(1,text.length-1)).toFixed(0)
+            // console.log(text);
+            setPredata(Viewtext.toString());
             setLoading(false);
         } catch (error) {
             console.error(error);
