@@ -48,14 +48,14 @@ function NowScreen() {
     //api 통신
     const getPrice = async () => {
         try {
-
+            setLoading(true);
             const todaytime = todayTime();
             // 전날 => newTime
             const newTime = todaytime.substring(0, 4) + todaytime.substring(6, 8) + (Number(todaytime.substring(10, 12)) - 1).toString()
             const response = await fetch('http://openapi.epis.or.kr/openapi/service/RltmAucBrknewsService/getPrdlstRltmAucBrknewsList?serviceKey=Yf8CKY2ztyZit92xmxsHJJLZr%2B47fcT4dDiZyhelKmqkjcATuJ4oCLfUWDeNHJuMA%2BNvXz9UhBTyV%2B8ZQdT8WQ%3D%3D&scode=&marketco=&cocode=&dates=' + newTime + '&lcode=&mcode=&numOfRows=250&pageNo=250');
             const text = await response.text();
             parseString(text, function (err, result) {
-                console.log(result['response']['body'])
+                // console.log(result['response']['body'])
                 setData(result['response']['body'][0]['items'][0]['item'][0]['mclassname']);
                 setPrice(result['response']['body'][0]['items'][0]['item'][0]['price']);
                 setWeight(result['response']['body'][0]['items'][0]['item'][0]['unitname']);
@@ -80,19 +80,18 @@ function NowScreen() {
                 setPrice5(result['response']['body'][0]['items'][0]['item'][4]['price']);
                 setWeight5(result['response']['body'][0]['items'][0]['item'][4]['unitname']);
                 setMarketname5(result['response']['body'][0]['items'][0]['item'][4]['marketname']);
-            
+                setLoading(false);
             })
         } catch (error) {
             console.error(error);
-        } finally {
-            setLoading(false);
-        }
+        } 
     }
 
+    useEffect(() => {
+        getPrice();
+    }, []);
 
-    getPrice();
-
-    console.log(data);
+    // console.log(data);
     return (
         <View style={{ flex: 1 }}>
             <View style={styles.time}>
@@ -104,7 +103,7 @@ function NowScreen() {
                 <View style={styles.c_item2} ><Text style={{ fontSize: 15 }}>거래량/등급</Text></View>
                 <View style={styles.c_item3} ><Text style={{ fontSize: 15 }}>가격</Text></View>
             </View>
-            <ScrollView>
+            { isLoading? <ActivityIndicator/> : <ScrollView>
                 <View style={styles.item}>
                     <Text style={styles.itemTitle}
                         ellipsizeMode={'tail'}>{data}</Text>
@@ -153,6 +152,7 @@ function NowScreen() {
                 </View>
                 
             </ScrollView>
+            }
         </View>
     );
 }
@@ -161,12 +161,12 @@ function NowScreen() {
 const styles = StyleSheet.create({
 
     time: { //시간
-        flex: 0.5,
+        flex: 1,
         justifyContent: 'center',
         alignItems: 'center',
     },
     container: {
-        flex: 0.8,
+        flex: 2,
         flexDirection: 'row', // 혹은 'column'
     },
     c_item1: {
