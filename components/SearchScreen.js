@@ -54,19 +54,29 @@ function SearchScreen() {
     //api 통신
     const getPrice = async (yd, texts) => {
         try {
-            const response = await fetch('https://www.garak.co.kr/publicdata/dataOpen.do?id=3098&passwd=qkrandjs1%21&dataid=data4&pagesize=10&pageidx=1&portal.templet=false&p_ymd=' + yd + '&p_jymd=20211110&d_cd=2&p_jjymd=' + yd + '&p_pos_gubun=1&pum_nm=' + texts);
+            const yasterday = (Number(yd)-1).toString();
+            const response = await fetch('https://www.garak.co.kr/publicdata/dataOpen.do?id=3098&passwd=qkrandjs1%21&dataid=data4&pagesize=10&pageidx=1&portal.templet=false&p_ymd='+yd+'&p_jymd='+yasterday+'&d_cd=2&p_jjymd='+yd+'&p_pos_gubun=1&pum_nm='+texts);
             const text = await response.text();
             parseString(text, function (err, result) {
-                setData(result['lists']['list'][2]['PUM_NM_A']);
-                setPrice(result['lists']['list'][2]['PAV_P_A']);
-                setWeight(result['lists']['list'][2]['U_NAME']);
-                setQuality(result['lists']['list'][2]['E_NAME']);
+                if(Number(result['lists']['list_total_count'])){
+                    setData(result['lists']['list'][2]['PUM_NM_A']);
+                    setPrice(result['lists']['list'][2]['PAV_P_A']);
+                    setWeight(result['lists']['list'][2]['U_NAME']);
+                    setQuality(result['lists']['list'][2]['E_NAME']);
+                    setLoading(false);
+                }
+                else
+                {
+                    setData("품목 이름 ("+texts+")하고 날짜를 확인해주세요");
+                    setLoading(true);
+                }
             })
         } catch (error) {
             console.error(error);
-        } finally {
-            setLoading(false);
-        }
+        } 
+        // finally {
+        //     setLoading(false);
+        // }
     }
 
     //date picker
@@ -97,8 +107,8 @@ function SearchScreen() {
 
         <View style={{ flex: 1 }}>
             <View style={styles.time}>
-                <Text sytle={{ fontSize: 24 }}>{todayTime()}</Text>
-                <Text sytle={{ fontSize: 24 }}>서울특별시 가락시장 기준입니다</Text>
+                <Text sytle={{ fontSize: 24 }}>오늘은 {todayTime()}</Text>
+                <Text sytle={{ fontSize: 24 }}>서울특별시 가락시장 기준입니다!</Text>
             </View>
 
             {/* SearchScreen 구성 */}
@@ -116,14 +126,14 @@ function SearchScreen() {
                     <TextInput
                         pointerEvents="none"
                         style={styles.textInput}
-                        placeholder="날짜를 입력해주세요"
+                        placeholder="날짜를 선택해주세요"
                         underlineColorAndroid="transparent"
                         editable={false}
                         value={text}
                     />
 
                     <DateTimePickerModal
-                        headerTextIOS="날짜를 입력해주세요"
+                        headerTextIOS="날짜를 선택해주세요"
                         isVisible={isDatePickerVisible}
                         mode="date"
                         onConfirm={handleConfirm}
@@ -132,15 +142,15 @@ function SearchScreen() {
                 </TouchableOpacity>
 
                 <TouchableOpacity onPress={submit}>
-                    <View style={styles.textInput}></View>
+                    <View style={styles.textInput}><Text style={{ fontSize: 16, textAlign: 'center' }}>가격 확인(클릭)</Text></View>
                 </TouchableOpacity>
             </View>
             <View style={styles.container}>
                 <View style={styles.c_item1} ><Text style={{ fontSize: 15 }}>품목</Text></View>
-                <View style={styles.c_item2} ><Text style={{ fontSize: 15 }}>거래량/등급</Text></View>
+                <View style={styles.c_item2} ><Text style={{ fontSize: 15 }}>품질/등급</Text></View>
                 <View style={styles.c_item3} ><Text style={{ fontSize: 15 }}>가격</Text></View>
             </View>
-            {isLoading ? (<ActivityIndicator/>) : (
+            {isLoading ? (<Text> 해당 품목이 없습니다. {data}</Text>) : (
             <View style={styles.item}>
                 <Text style={styles.itemTitle}
                     ellipsizeMode={'tail'}>{data}</Text>
@@ -165,12 +175,12 @@ const styles = StyleSheet.create({
         alignItems: 'center',
     },
     time: { //시간
-        flex: 0.1,
+        flex: 0.2,
         justifyContent: 'center',
         alignItems: 'center',
     },
     container: {
-        flex: 0.1,
+        flex: 0.15,
         flexDirection: 'row', // 혹은 'column'
     },
     c_item1: {
@@ -191,15 +201,10 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         alignItems: 'center',
     },
-    // input: {
-    //     height: 40,
-    //     margin: 12,
-    //     borderWidth: 1,
-    //     padding: 10,
-    // },
     container2: {
         alignItems: 'center',
     },
+    
     textInput: {
         fontSize: 16,
         color: '#000000',
@@ -207,9 +212,11 @@ const styles = StyleSheet.create({
         width: 300,
         borderColor: '#000000',
         borderWidth: 1,
-        borderRadius: 12,
-        padding: 10
+        borderRadius: 15,
+        padding: 10,
+        margin: 5,
     },
+
     // 감싸는 아이템
     item: {
         padding: 15,
@@ -218,16 +225,20 @@ const styles = StyleSheet.create({
         flex: 0,
         flexDirection: 'row',
     },
+    
     itemTitle: {
         fontSize: 18,
         flex: 1,
-        fontWeight: 'bold'
+        fontWeight: 'bold',
+        textAlignVertical: 'center',
     },
+    
     itemCreator: {
         flex: 1,
         fontSize: 15,
         color: '#666'
     },
+    
     itemDate: {
         marginTop: 8,
         fontSize: 18,
