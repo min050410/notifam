@@ -6,31 +6,81 @@ import { useEffect, useState } from 'react';
 //components
 import todayTime from 'NOTIFAM/components/todaytime';
 
+
 // 현재가를 알려주는 스크린
 function NowScreen() {
     const [isLoading, setLoading] = useState(true)
+
+    // 이렇게 한 이유 비동기 통신이라 계속 값이 바뀌고 배열에도 잘 안들어감
+    // 24시간동안 하다가 결국은 이 방식을 씀
+    // 나중에 꼭 수정하겠음
+
     // 농작물 이름
     const [data, setData] = useState([]);
+    const [data2, setData2] = useState([]);
+    const [data3, setData3] = useState([]);
+    const [data4, setData4] = useState([]);
+    const [data5, setData5] = useState([]);
+   
     // 농작물 가격
     const [price, setPrice] = useState([]);
+    const [price2, setPrice2] = useState([]);
+    const [price3, setPrice3] = useState([]);
+    const [price4, setPrice4] = useState([]);
+    const [price5, setPrice5] = useState([]);
+ 
     // 농작물 무게
     const [weight, setWeight] = useState([]);
-
-    let [total, setTotal] = useState([]);
-    let [totalprice, setTotalprice] = useState([]);
-
-
+    const [weight2, setWeight2] = useState([]);
+    const [weight3, setWeight3] = useState([]);
+    const [weight4, setWeight4] = useState([]);
+    const [weight5, setWeight5] = useState([]);
+   
+    
+    // 농작물 시장
+    const [marketname, setMarketname] = useState([]);
+    const [marketname2, setMarketname2] = useState([]);
+    const [marketname3, setMarketname3] = useState([]);
+    const [marketname4, setMarketname4] = useState([]);
+    const [marketname5, setMarketname5] = useState([]);
+    
 
     //api 통신
-    const getPrice = async (texts) => {
+    const getPrice = async () => {
         try {
-            const response = await fetch('https://www.garak.co.kr/publicdata/dataOpen.do?id=3098&passwd=qkrandjs1%21&dataid=data4&pagesize=10&pageidx=1&portal.templet=false&p_ymd=20211111&p_jymd=20211110&d_cd=2&p_jjymd=20201111&p_pos_gubun=1&pum_nm=' + texts);
+
+            const todaytime = todayTime();
+            // 전날 => newTime
+            const newTime = todaytime.substring(0, 4) + todaytime.substring(6, 8) + (Number(todaytime.substring(10, 12)) - 1).toString()
+            const response = await fetch('http://openapi.epis.or.kr/openapi/service/RltmAucBrknewsService/getPrdlstRltmAucBrknewsList?serviceKey=Yf8CKY2ztyZit92xmxsHJJLZr%2B47fcT4dDiZyhelKmqkjcATuJ4oCLfUWDeNHJuMA%2BNvXz9UhBTyV%2B8ZQdT8WQ%3D%3D&scode=&marketco=&cocode=&dates=' + newTime + '&lcode=&mcode=&numOfRows=250&pageNo=250');
             const text = await response.text();
             parseString(text, function (err, result) {
-                setData(result['lists']['list'][0]['PUM_NM_A']);
-                setPrice(result['lists']['list'][0]['AV_P_A']);
-                setWeight(result['lists']['list'][0]['U_NAME']);
+                console.log(result['response']['body'])
+                setData(result['response']['body'][0]['items'][0]['item'][0]['mclassname']);
+                setPrice(result['response']['body'][0]['items'][0]['item'][0]['price']);
+                setWeight(result['response']['body'][0]['items'][0]['item'][0]['unitname']);
+                setMarketname(result['response']['body'][0]['items'][0]['item'][0]['marketname']);
 
+                setData2(result['response']['body'][0]['items'][0]['item'][1]['mclassname']);
+                setPrice2(result['response']['body'][0]['items'][0]['item'][1]['price']);
+                setWeight2(result['response']['body'][0]['items'][0]['item'][1]['unitname']);
+                setMarketname2(result['response']['body'][0]['items'][0]['item'][1]['marketname']);
+
+                setData3(result['response']['body'][0]['items'][0]['item'][2]['mclassname']);
+                setPrice3(result['response']['body'][0]['items'][0]['item'][2]['price']);
+                setWeight3(result['response']['body'][0]['items'][0]['item'][2]['unitname']);
+                setMarketname3(result['response']['body'][0]['items'][0]['item'][2]['marketname']);
+
+                setData4(result['response']['body'][0]['items'][0]['item'][3]['mclassname']);
+                setPrice4(result['response']['body'][0]['items'][0]['item'][3]['price']);
+                setWeight4(result['response']['body'][0]['items'][0]['item'][3]['unitname']);
+                setMarketname4(result['response']['body'][0]['items'][0]['item'][3]['marketname']);
+
+                setData5(result['response']['body'][0]['items'][0]['item'][4]['mclassname']);
+                setPrice5(result['response']['body'][0]['items'][0]['item'][4]['price']);
+                setWeight5(result['response']['body'][0]['items'][0]['item'][4]['unitname']);
+                setMarketname5(result['response']['body'][0]['items'][0]['item'][4]['marketname']);
+            
             })
         } catch (error) {
             console.error(error);
@@ -39,27 +89,10 @@ function NowScreen() {
         }
     }
 
-    // onClick={()=>changeFilter(column)}
 
-    const menus = ["고구마", "감자", "배추", "상추"]
+    getPrice();
 
-    const menuList = menus.map((menu, index) => (
-
-        useEffect(() => {
-            getPrice(menu);
-        }, []),
-
-        <View style={styles.item} key={index}>
-            <Text style={styles.itemTitle}
-                ellipsizeMode={'tail'}>{menu}</Text>
-            <Text style={styles.itemCreator}
-                ellipsizeMode={'tail'}>
-                가락시장 {total[index]}
-            </Text>
-            <Text style={styles.itemDate}>{totalprice[index]}원</Text>
-        </View>
-    ))
-
+    console.log(data);
     return (
         <View style={{ flex: 1 }}>
             <View style={styles.time}>
@@ -72,7 +105,53 @@ function NowScreen() {
                 <View style={styles.c_item3} ><Text style={{ fontSize: 15 }}>가격</Text></View>
             </View>
             <ScrollView>
-                {menuList}
+                <View style={styles.item}>
+                    <Text style={styles.itemTitle}
+                        ellipsizeMode={'tail'}>{data}</Text>
+                    <Text style={styles.itemCreator}
+                        ellipsizeMode={'tail'}>
+                        {marketname} {weight}
+                    </Text>
+                    <Text style={styles.itemDate}>{price}원</Text>
+                </View>
+
+                <View style={styles.item}>
+                    <Text style={styles.itemTitle}
+                        ellipsizeMode={'tail'}>{data2}</Text>
+                    <Text style={styles.itemCreator}
+                        ellipsizeMode={'tail'}>
+                        {marketname2} {weight2}
+                    </Text>
+                    <Text style={styles.itemDate}>{price2}원</Text>
+                </View>
+                <View style={styles.item}>
+                    <Text style={styles.itemTitle}
+                        ellipsizeMode={'tail'}>{data3}</Text>
+                    <Text style={styles.itemCreator}
+                        ellipsizeMode={'tail'}>
+                        {marketname3} {weight3}
+                    </Text>
+                    <Text style={styles.itemDate}>{price3}원</Text>
+                </View>
+                <View style={styles.item}>
+                    <Text style={styles.itemTitle}
+                        ellipsizeMode={'tail'}>{data4}</Text>
+                    <Text style={styles.itemCreator}
+                        ellipsizeMode={'tail'}>
+                        {marketname4} {weight4}
+                    </Text>
+                    <Text style={styles.itemDate}>{price4}원</Text>
+                </View>
+                <View style={styles.item}>
+                    <Text style={styles.itemTitle}
+                        ellipsizeMode={'tail'}>{data5}</Text>
+                    <Text style={styles.itemCreator}
+                        ellipsizeMode={'tail'}>
+                        {marketname5} {weight5}
+                    </Text>
+                    <Text style={styles.itemDate}>{price5}원</Text>
+                </View>
+                
             </ScrollView>
         </View>
     );
@@ -80,13 +159,14 @@ function NowScreen() {
 
 // style
 const styles = StyleSheet.create({
+
     time: { //시간
-        flex: 0.15,
+        flex: 0.5,
         justifyContent: 'center',
         alignItems: 'center',
     },
     container: {
-        flex: 0.2,
+        flex: 0.8,
         flexDirection: 'row', // 혹은 'column'
     },
     c_item1: {
