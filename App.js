@@ -10,13 +10,12 @@ import NowScreen from './components/NowScreen';
 import HomeScreen from './components/HomeScreen';
 import SearchScreen from './components/SearchScreen';
 
-
 // react native logo
-const logo = {
-  uri: 'https://reactnative.dev/img/tiny_logo.png',
-  width: 64,
-  height: 64
-};
+// const logo = {
+//   uri: 'https://reactnative.dev/img/tiny_logo.png',
+//   width: 64,
+//   height: 64
+// };
 
 const Tab = createBottomTabNavigator();
 

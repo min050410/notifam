@@ -8,7 +8,7 @@ import todayTime from 'NOTIFAM/components/todaytime';
 
 // 현재가를 알려주는 스크린
 function NowScreen() {
-    const [isLoading, setLoading] = useState(true);
+    const [isLoading, setLoading] = useState(true)
     // 농작물 이름
     const [data, setData] = useState([]);
     // 농작물 가격
@@ -19,21 +19,18 @@ function NowScreen() {
     let [total, setTotal] = useState([]);
     let [totalprice, setTotalprice] = useState([]);
 
-   
+
 
     //api 통신
     const getPrice = async (texts) => {
         try {
-            const response = await fetch('https://www.garak.co.kr/publicdata/dataOpen.do?id=3098&passwd=qkrandjs1%21&dataid=data4&pagesize=10&pageidx=1&portal.templet=false&p_ymd=20211111&p_jymd=20211110&d_cd=2&p_jjymd=20201111&p_pos_gubun=1&pum_nm='+texts);
+            const response = await fetch('https://www.garak.co.kr/publicdata/dataOpen.do?id=3098&passwd=qkrandjs1%21&dataid=data4&pagesize=10&pageidx=1&portal.templet=false&p_ymd=20211111&p_jymd=20211110&d_cd=2&p_jjymd=20201111&p_pos_gubun=1&pum_nm=' + texts);
             const text = await response.text();
             parseString(text, function (err, result) {
                 setData(result['lists']['list'][0]['PUM_NM_A']);
                 setPrice(result['lists']['list'][0]['AV_P_A']);
                 setWeight(result['lists']['list'][0]['U_NAME']);
-                
-                setTotalprice(totalprice.concat(price)),
-                setTotal(total.concat(weight))
-                console.log(totalprice)
+
             })
         } catch (error) {
             console.error(error);
@@ -47,22 +44,22 @@ function NowScreen() {
     const menus = ["고구마", "감자", "배추", "상추"]
 
     const menuList = menus.map((menu, index) => (
-        
+
         useEffect(() => {
             getPrice(menu);
         }, []),
-        
+
         <View style={styles.item} key={index}>
             <Text style={styles.itemTitle}
-            ellipsizeMode={'tail'}>{menu}</Text>
+                ellipsizeMode={'tail'}>{menu}</Text>
             <Text style={styles.itemCreator}
-            ellipsizeMode={'tail'}>
-            가락시장 {total[index]}
+                ellipsizeMode={'tail'}>
+                가락시장 {total[index]}
             </Text>
             <Text style={styles.itemDate}>{totalprice[index]}원</Text>
         </View>
     ))
-    
+
     return (
         <View style={{ flex: 1 }}>
             <View style={styles.time}>
